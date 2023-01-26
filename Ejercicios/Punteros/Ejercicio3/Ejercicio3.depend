@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1674163116 source:d:\datos\documentos\upe\rendir\estructura de datos\ejercicios\punteros\ejercicio3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+

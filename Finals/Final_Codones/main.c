@@ -6,11 +6,14 @@ struct codon
 {
     char *secuencia;
     int tamanio;
+    int id;
 };
 
 void imprimir_codon(struct codon *);
 void estadistica_codon(struct codon *);
 int verificar_codon(char *);
+void guardar_codon(struct codon *);
+void leer_archivo();
 
 int main(){
     struct codon adn;
@@ -20,11 +23,12 @@ int main(){
     scanf("%s", adn.secuencia);
     adn.tamanio = strlen(adn.secuencia);
 
-
     if(verificar_codon(adn.secuencia) == 0)
         {
             imprimir_codon(&adn);
             estadistica_codon(&adn);
+            guardar_codon(&adn);
+            leer_archivo();
         }
     else{
         printf("\nNo se pudo, no es multiplo de 3 o ingresaste mal la secuencia");
@@ -101,3 +105,41 @@ void estadistica_codon(struct codon *adn)
         printf("%s\t%d\n", codons[i], contador[i]);
     }
 }
+
+
+void guardar_codon(struct codon *adn)
+{
+
+    FILE *binario = fopen("codon.bin", "wb");
+
+    if(binario == NULL){
+        printf("Error al abrir el archivo\n");
+        return;
+    }
+    else{
+    printf("Escribiendo en el archivo...\n");
+    fwrite(adn, sizeof(struct codon), 1, binario);
+    }
+    fclose(binario);
+}
+
+void leer_archivo()
+{
+     FILE *binario = fopen("codon.bin", "rb");
+
+     if(!binario)
+        {
+            printf("Error al abrir");
+            return;
+
+        }
+    struct codon codon_leido;
+    while(fread(&codon_leido, sizeof(struct codon),1,binario) == 1)
+        {
+            printf("ID: %d\n", codon_leido.id);
+            printf("Secuencia: %s\n", codon_leido.secuencia);
+            printf("Tamanio: %d\n", codon_leido.tamanio);
+        }
+    fclose(binario);
+}
+

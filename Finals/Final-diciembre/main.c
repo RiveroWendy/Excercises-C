@@ -18,8 +18,11 @@ struct registro
 
 void crearCuenta(FILE *, struct binario *);
 void consultarCuentas(FILE *);
+void operacionDebito(FILE *, int, float);
+void guardarMovimiento(FILE *);
 
 int verificarNumero(int);
+int verificarDebito(int);
 int buscarCuenta(FILE *, int);
 
 int main()
@@ -27,8 +30,10 @@ int main()
     FILE *cuentasBancarias = NULL, *movimientos = NULL, *log=NULL;
     struct binario dato_grabar;
     int numeroCuenta = 12345678;
+    float numDebito = 200;
     crearCuenta(cuentasBancarias, &dato_grabar);
     consultarCuentas(cuentasBancarias);
+    operacionDebito(cuentasBancarias, numeroCuenta,numDebito);
 
     return 0;
 }
@@ -89,6 +94,39 @@ void consultarCuentas(FILE *cuentasBancarias)
     fclose(cuentasBancarias);
 }
 
+void operacionDebito(FILE *cuentasBancarias, int cuenta, float monto)
+{
+    cuentasBancarias = fopen("cuentas_bancarias.bin", "r+b");
+    if (!cuentasBancarias) {
+        printf("Error al abrir el archivo\n");
+        return;
+    }
+    struct binario dato;
+    int encontrado = 0;
+
+    while (fread(&dato, sizeof(struct binario), 1, cuentasBancarias) == 1) {
+        if (dato.numero == cuenta) {
+            encontrado = 1;
+            if (dato.saldo >= monto) {
+                dato.saldo -= monto;
+                fseek(cuentasBancarias, sizeof(struct binario), SEEK_CUR);
+                fwrite(&dato, sizeof(struct binario), 1, cuentasBancarias);
+                printf("Debito exitoso\n");
+            } else {
+                printf("Saldo insuficiente\n");
+            }
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("Cuenta no encontrada\n");
+    }
+
+    fclose(cuentasBancarias);
+}
+
+
 int verificarNumero(int numero)
 {
     int tamanio = 0;
@@ -103,6 +141,17 @@ int verificarNumero(int numero)
     return tamanio;
 }
 
+int verificarDebito(int numDebito)
+{
+    struct binario dato;
+
+    if(dato.saldo>=numDebito)
+        {
+            return 1;
+        }
+    return 0;
+
+}
 
 int buscarCuenta(FILE * cuentasBancarias, int numeroCuenta)
 {

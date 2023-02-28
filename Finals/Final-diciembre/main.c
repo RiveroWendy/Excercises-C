@@ -19,7 +19,7 @@ struct registro
 void crearCuenta(FILE *, struct binario *);
 void consultarCuentas(FILE *);
 void operacionDebito(FILE *, int, float);
-void guardarMovimiento(FILE *);
+void ModificarTitular(FILE *);
 
 int verificarNumero(int);
 int verificarDebito(int);
@@ -38,6 +38,7 @@ int main()
         printf("2. Consultar cuentas\n");
         printf("3. Buscar cuenta\n");
         printf("4. Realizar un debito\n");
+        printf("5. Modificar Titular\n");
         printf("0. Salir\n");
         printf("\nIngrese su opcion:\n");
         scanf("%d", &opcion);
@@ -60,6 +61,9 @@ int main()
                 printf("Ingrese monto a debitar:\n");
                 scanf("%f", &monto);
                 operacionDebito(cuentasBancarias, numeroCuenta, monto);
+                break;
+            case 5:
+                ModificarTitular(cuentasBancarias);
                 break;
             case 0:
                 printf("Adios!\n");
@@ -201,6 +205,7 @@ if (!cuentasBancarias)
     rewind(cuentasBancarias);
     while(fread(&dato, sizeof(struct binario), 1 , cuentasBancarias) == 1)
         {
+            dato.nombre[sizeof(dato.nombre) - 1] = '\0'; // add null termination
             if(dato.numero == numeroCuenta)
                 {
                     printf("Cuenta Encontrada\n");
@@ -214,4 +219,50 @@ if (!cuentasBancarias)
         printf("Cuenta no encontrada\n");
         fclose(cuentasBancarias);
         return 0;
+}
+
+void ModificarTitular(FILE *cuentasBancarias)
+{
+    cuentasBancarias = fopen("cuentas_bancarias.bin", "rb+");
+    int numeroCuenta;
+    char nuevoNombre[50];
+    int encontrado = 0;
+    struct binario dato;
+
+    if(!cuentasBancarias)
+    {
+        printf("Error al abrir el archivo\n");
+        return;
+    }
+    rewind(cuentasBancarias);
+    printf("\nOpcion Modificar Titular \n");
+    printf("Ingrese el numero de cuenta que desea modificar: ");
+    scanf("%d", &numeroCuenta);
+
+    rewind(cuentasBancarias);
+
+    while(fread(&dato, sizeof(struct binario),1,cuentasBancarias) == 1)
+    {
+
+        if (dato.numero == numeroCuenta)
+        {
+            printf("Cuenta Encontrada\n");
+            printf("Titular actual: %s\n", dato.nombre);
+            printf("Ingrese el nuevo titular:\n");
+            scanf("%s", dato.nombre);
+
+            fseek(cuentasBancarias, sizeof(struct binario), SEEK_CUR);
+            fwrite(&dato, sizeof(struct binario), 1, cuentasBancarias);
+
+            encontrado = 1;
+            break;
+        }
+    }
+
+    if (!encontrado)
+    {
+        printf("Cuenta no encontrada\n");
+    }
+
+    fclose(cuentasBancarias);
 }

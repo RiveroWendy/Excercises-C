@@ -27,16 +27,51 @@ int buscarCuenta(FILE *, int);
 
 int main()
 {
-    FILE *cuentasBancarias = NULL, *movimientos = NULL, *log=NULL;
+    FILE *cuentasBancarias = NULL;
     struct binario dato_grabar;
-    int numeroCuenta = 12345678;
-    float numDebito = 200;
-    crearCuenta(cuentasBancarias, &dato_grabar);
-    consultarCuentas(cuentasBancarias);
-    operacionDebito(cuentasBancarias, numeroCuenta,numDebito);
+    int opcion, numeroCuenta;
+    float monto;
+
+    do {
+        printf("\nOpciones:\n");
+        printf("1. Crear cuenta\n");
+        printf("2. Consultar cuentas\n");
+        printf("3. Buscar cuenta\n");
+        printf("4. Realizar un debito\n");
+        printf("0. Salir\n");
+        printf("\nIngrese su opcion:\n");
+        scanf("%d", &opcion);
+
+        switch(opcion) {
+            case 1:
+                crearCuenta(cuentasBancarias, &dato_grabar);
+                break;
+            case 2:
+                consultarCuentas(cuentasBancarias);
+                break;
+            case 3:
+                printf("Ingrese numero de cuenta:\n");
+                scanf("%d", &numeroCuenta);
+                buscarCuenta(cuentasBancarias, numeroCuenta);
+                break;
+            case 4:
+                printf("Ingrese numero de cuenta:\n");
+                scanf("%d", &numeroCuenta);
+                printf("Ingrese monto a debitar:\n");
+                scanf("%f", &monto);
+                operacionDebito(cuentasBancarias, numeroCuenta, monto);
+                break;
+            case 0:
+                printf("Adios!\n");
+                break;
+            default:
+                printf("Opcion invalida\n");
+        }
+    } while(opcion != 0);
 
     return 0;
 }
+
 
 void crearCuenta(FILE *cuentasBancarias, struct binario *dato_grabar)
 {

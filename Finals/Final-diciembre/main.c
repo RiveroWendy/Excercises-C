@@ -31,7 +31,7 @@ int main()
     struct binario dato_grabar;
     int opcion, numeroCuenta;
     float monto;
-
+//Menu de Opciones
     do {
         printf("\nOpciones:\n");
         printf("1. Crear cuenta\n");
@@ -80,6 +80,8 @@ int main()
 void crearCuenta(FILE *cuentasBancarias, struct binario *dato_grabar)
 {
     cuentasBancarias = fopen("cuentas_bancarias.bin", "ab");
+    //se abre en ab porque permite escribir al final del archivo
+    //sin sobreescribir datos ya existentes
     int num_digitos = 0;
     if(!cuentasBancarias)
     {
@@ -88,7 +90,6 @@ void crearCuenta(FILE *cuentasBancarias, struct binario *dato_grabar)
     }
 
     printf("\nOpcion Crear Cuenta \n");
-
    do {
     printf("\n Ingrese Numero de cuenta:\n");
     scanf("%d", &dato_grabar->numero);
